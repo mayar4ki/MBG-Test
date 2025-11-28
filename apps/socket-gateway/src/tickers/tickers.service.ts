@@ -10,6 +10,11 @@ export type PriceAlert = {
   timestamp: number;
 };
 
+export type TickerPriceUpdate = {
+  id: string;
+  nextPrice: number;
+};
+
 const PRICE_ALERT_THRESHOLD = 0.05; // 2%
 
 const formatClockLabel = () =>
@@ -29,19 +34,21 @@ export class TickersService {
     return this.tickers;
   }
 
-  updateTickers(): { tickers: LiveTicker[]; alerts: PriceAlert[] } {
+  updateTickers(): { updates: TickerPriceUpdate[]; alerts: PriceAlert[] } {
     const alerts: PriceAlert[] = [];
+    const updates: TickerPriceUpdate[] = [];
 
     this.tickers = this.tickers.map((ticker) => {
       const nextPrice = this.generateNextPrice(ticker);
       const alert = this.maybeCreateAlert(ticker, nextPrice);
       if (alert) alerts.push(alert);
 
+      updates.push({ id: ticker.id, nextPrice });
 
       return this.buildUpdatedTicker(ticker, nextPrice);
     });
 
-    return { tickers: this.tickers, alerts };
+    return { updates, alerts };
   }
 
   private generateNextPrice(ticker: LiveTicker): number {

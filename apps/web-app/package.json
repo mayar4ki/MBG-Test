@@ -13,8 +13,6 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@acme/client": "workspace:*",
-    "@acme/shared": "workspace:*",
     "@acme/ui": "workspace:*",
     "@acme/white-label": "workspace:*",
     "@hookform/resolvers": "^5.2.2",

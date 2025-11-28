@@ -4,6 +4,7 @@ export type TickerHistoryPoint = {
 };
 
 export type Ticker = {
+  id: string;
   symbol: string;
   name: string;
   sector: string;
@@ -28,4 +29,9 @@ export type PriceAlert = {
   nextPrice: number;
   changePct: number;
   timestamp: number;
+};
+
+export type TickerPriceUpdate = {
+  id: string;
+  nextPrice: number;
 };

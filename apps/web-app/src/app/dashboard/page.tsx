@@ -7,38 +7,16 @@ import { TickerDetailCard } from '~/app/dashboard/_components/ticker/TickerDetai
 import { TickerHeroCard } from '~/app/dashboard/_components/ticker/TickerHeroCard';
 import { TickerListCard } from '~/app/dashboard/_components/ticker/TickerListCard';
 import { useAlertSound } from '~/app/dashboard/_hooks/useAlertSound';
-
-import type { LiveTicker } from '~/_types';
+import { useTickers } from '~/app/dashboard/_hooks/useTickers';
 import { subscribeToTickerSocket } from '~/services/tickerSocket';
 
+import type { PriceAlert } from '~/_types';
+
 export default function Page() {
-  const [tickers, setTickers] = useState<LiveTicker[]>([]);
+  const { tickers, setInitialTickers, applyUpdates } = useTickers();
   const [selectedSymbol, setSelectedSymbol] = useState('');
   const chartGradientId = useId();
   const playAlertSound = useAlertSound();
-
-
-  useEffect(() => {
-    const cleanup = subscribeToTickerSocket({
-      onInit: (payload) => {
-        setTickers(payload);
-        setSelectedSymbol((current) => current || (payload[0]?.symbol ?? ''));
-      },
-      onUpdate: (payload) => setTickers(payload),
-      onAlert: ({ symbol, changePct, previousPrice, nextPrice }) => {
-        toast.info(`${symbol} price jumped ${changePct}%`, {
-          description: `$${previousPrice.toFixed(2)} -> $${nextPrice.toFixed(2)}`,
-          action: {
-            label: 'close',
-            onClick: () => { }
-          }
-        });
-        playAlertSound();
-      },
-    });
-
-    return cleanup;
-  }, []);
 
   const selectedTicker = useMemo(
     () => tickers.find((ticker) => ticker.symbol === selectedSymbol) ?? tickers[0],
@@ -46,6 +24,28 @@ export default function Page() {
   );
 
   const selectedChange = selectedTicker ? computeChange(selectedTicker.price, selectedTicker.previousClose) : undefined;
+
+  useEffect(() => {
+    const cleanup = subscribeToTickerSocket({
+      onInit: (payload) => {
+        setInitialTickers(payload);
+        setSelectedSymbol((current) => current || (payload[0]?.symbol ?? ''));
+      },
+      onUpdate: applyUpdates,
+      onAlert: ({ symbol, changePct, previousPrice, nextPrice }: PriceAlert) => {
+        toast.info(`${symbol} price jumped ${changePct}%`, {
+          description: `$${previousPrice.toFixed(2)} -> $${nextPrice.toFixed(2)}`,
+          action: {
+            label: 'close',
+            onClick: () => { },
+          },
+        });
+        playAlertSound();
+      },
+    });
+
+    return cleanup;
+  }, [applyUpdates, setInitialTickers]);
 
   if (!selectedTicker || !selectedChange) {
     return (

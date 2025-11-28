@@ -1,11 +1,11 @@
 import { io, type Socket } from 'socket.io-client';
-import type { LiveTicker, PriceAlert } from '~/_types';
+import type { LiveTicker, PriceAlert, TickerPriceUpdate } from '~/_types';
 import { env } from '~/env';
 import { tokenService } from './auth/tokenService';
 
 type TickerSocketHandlers = {
   onInit?: (payload: LiveTicker[]) => void;
-  onUpdate?: (payload: LiveTicker[]) => void;
+  onUpdate?: (payload: TickerPriceUpdate[]) => void;
   onAlert?: (payload: PriceAlert) => void;
 };
 
