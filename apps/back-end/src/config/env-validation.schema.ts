@@ -8,7 +8,7 @@ export const envValidationSchema = z.object({
     }
     return parseInt(String(val), 10);
   }, z.number().int().min(1).max(65535)),
-    
+  JWT_SECRET: z.string().min(10).default('dev-jwt-secret'),
 });
 
 export type Env = z.infer<typeof envValidationSchema>;
