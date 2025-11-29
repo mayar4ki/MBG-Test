@@ -132,6 +132,13 @@ pnpm build
 ```
 
 ---
+## 🐋 Deployment: Docker compose
+For production deployments without auto-scaling.
+
+```bash
+# Build all apps
+docker compose up -d
+```
 
 ## ☸️ Deployment: Kubernetes
 

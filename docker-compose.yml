@@ -1,0 +1,57 @@
+services:
+  # Socket Gateway (single instance, no Redis needed)
+  socket-gateway:
+    build:
+      context: .
+      dockerfile: apps/socket-gateway/Dockerfile
+    container_name: mg-socket-gateway
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=production
+      - GATEWAY_PORT=3003
+      # No REDIS_URL = in-memory adapter (single node only)
+    env_file:
+      - .env
+    depends_on:
+      back-end:
+        condition: service_started
+    restart: unless-stopped
+
+  # Backend API
+  back-end:
+    build:
+      context: .
+      dockerfile: apps/back-end/Dockerfile
+    container_name: mg-back-end
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=production
+      - PORT=3002
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  # Web App (Next.js)
+  web-app:
+    build:
+      context: .
+      dockerfile: apps/web-app/Dockerfile
+      args:
+        - NEXT_PUBLIC_BACKEND_URL=http://localhost:3002
+        - NEXT_PUBLIC_SOKCET_GETWAY_URL=http://localhost:3003
+    container_name: mg-web-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    depends_on:
+      - back-end
+      - socket-gateway
+    restart: unless-stopped
+
+volumes:
+  redis_data:
