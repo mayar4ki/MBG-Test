@@ -11,8 +11,15 @@ type TickerSocketHandlers = {
 
 let socket: Socket | null = null;
 let subscribers = 0;
+let disconnectTimeout: ReturnType<typeof setTimeout> | null = null;
 
 const ensureSocket = () => {
+  // Cancel any pending disconnect (handles React StrictMode double-invoke)
+  if (disconnectTimeout) {
+    clearTimeout(disconnectTimeout);
+    disconnectTimeout = null;
+  }
+
   if (socket) return socket;
 
   const token = tokenService.getToken();
@@ -55,8 +62,15 @@ export const subscribeToTickerSocket = (handlers: TickerSocketHandlers) => {
 
     subscribers = Math.max(0, subscribers - 1);
     if (subscribers === 0) {
-      socket.disconnect();
-      socket = null;
+      // Delay disconnect to handle React StrictMode double-invoke in dev mode.
+      // If a new subscriber joins before timeout fires, ensureSocket() cancels this.
+      disconnectTimeout = setTimeout(() => {
+        if (socket && subscribers === 0) {
+          socket.disconnect();
+          socket = null;
+        }
+        disconnectTimeout = null;
+      }, 100);
     }
   };
 };

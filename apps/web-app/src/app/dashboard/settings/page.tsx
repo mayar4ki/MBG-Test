@@ -63,7 +63,7 @@ export default function Page() {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="min-w-36 justify-between">
+                <Button variant="outline" className="min-w-36 justify-between" disabled>
                   <span className="truncate">{currentLangLabel}</span>
                   <Globe className="ml-2 size-4 opacity-70" />
                 </Button>
