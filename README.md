@@ -130,18 +130,15 @@ pnpm dev
 # Build all apps
 pnpm build
 ```
-
----
-## 🐋 Deployment: Docker compose
-For production deployments without auto-scaling.
+### Build with Docker compose, No auto-scaling. 
 
 ```bash
 # Build all apps
 docker compose up -d
 ```
+---
 
 ## ☸️ Deployment: Kubernetes
-
 For production deployments with auto-scaling and high availability.
 
 ### Quick Start
@@ -150,8 +147,16 @@ For production deployments with auto-scaling and high availability.
 # set the context
 kubectl config use-context docker-desktop
 
-# Deploy to Docker Desktop
+# Deploy
 ./scripts/k8s-deploy.sh
+
+# Useful commands:
+kubectl -n mg-test get pods          # List pods"
+kubectl -n mg-test get services      # List services"
+kubectl -n mg-test logs -f <pod>     # View logs"
+kubectl -n mg-test get hpa           # View auto-scaling status"
+kubectl delete -k k8s/               # Delete all resources"
+kubectl apply -k k8s/                # Apply all resources"
 ```
 
 ### Scaling
@@ -164,10 +169,6 @@ Auto-scaling is configured for all services:
 | socket | 1 | 5 | CPU > 70% or Memory > 80% |
 | web | 1 | 3 | CPU > 70% or Memory > 80% |
 
-Check HPA status:
-```bash
-kubectl -n mg-test get hpa
-```
 
 ### Secrets Configuration
 
@@ -191,16 +192,6 @@ After updating secrets, apply and restart:
 kubectl apply -k k8s/
 kubectl -n mg-test rollout restart deployment/api deployment/socket deployment/web
 ```
-
-### Cleanup
-
-```bash
-./scripts/k8s-delete.sh
-# or
-kubectl delete -k k8s/
-```
-
----
 
 ## ⚙️ Environment Variables
 
