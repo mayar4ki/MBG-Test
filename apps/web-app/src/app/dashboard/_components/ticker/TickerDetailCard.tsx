@@ -1,5 +1,6 @@
 import { Badge } from '@acme/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@acme/ui/card';
+import { Progress } from '@acme/ui/progress';
 import type { TooltipProps } from 'recharts';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { LiveTicker, TickerChange } from '~/_types';
@@ -45,9 +46,8 @@ export const TickerDetailCard = ({ selectedTicker, selectedChange, chartGradient
             {formatPrice(selectedTicker.price, selectedTicker.price > 5000)}
           </div>
           <div
-            className={`flex items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold ${
-              selectedChange.delta >= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'
-            }`}
+            className={`flex items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold ${selectedChange.delta >= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'
+              }`}
           >
             {selectedChange.delta >= 0 ? '▲' : '▼'} {selectedChange.delta} ({selectedChange.deltaPct}%)
           </div>
@@ -95,21 +95,16 @@ export const TickerDetailCard = ({ selectedTicker, selectedChange, chartGradient
               <span>{formatPrice(selectedTicker.dayRange[0])}</span>
               <span>{formatPrice(selectedTicker.dayRange[1])}</span>
             </div>
-            <div className="mt-2 h-1 rounded-full bg-muted">
-              <div
-                className="h-full rounded-full bg-primary"
-                style={{
-                  width: `${Math.min(
-                    100,
-                    Math.max(
-                      4,
-                      ((selectedTicker.price - selectedTicker.dayRange[0]) / (selectedTicker.dayRange[1] - selectedTicker.dayRange[0])) *
-                        100
-                    )
-                  )}%`,
-                }}
-              />
-            </div>
+            <Progress
+              className="mt-2 h-1 bg-muted"
+              value={Math.min(
+                100,
+                Math.max(
+                  4,
+                  ((selectedTicker.price - selectedTicker.dayRange[0]) / (selectedTicker.dayRange[1] - selectedTicker.dayRange[0])) * 100
+                )
+              )}
+            />
           </div>
           <div className="rounded-lg border bg-background/60 p-3">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">52w range</p>
@@ -117,22 +112,18 @@ export const TickerDetailCard = ({ selectedTicker, selectedChange, chartGradient
               <span>{formatPrice(selectedTicker.week52Range[0])}</span>
               <span>{formatPrice(selectedTicker.week52Range[1])}</span>
             </div>
-            <div className="mt-2 h-1 rounded-full bg-muted">
-              <div
-                className="h-full rounded-full bg-primary/80"
-                style={{
-                  width: `${Math.min(
-                    100,
-                    Math.max(
-                      4,
-                      ((selectedTicker.price - selectedTicker.week52Range[0]) /
-                        (selectedTicker.week52Range[1] - selectedTicker.week52Range[0])) *
-                        100
-                    )
-                  )}%`,
-                }}
-              />
-            </div>
+            <Progress
+              className="mt-2 h-1 bg-muted *:data-[slot=progress-indicator]:bg-primary/80"
+              value={Math.min(
+                100,
+                Math.max(
+                  4,
+                  ((selectedTicker.price - selectedTicker.week52Range[0]) /
+                    (selectedTicker.week52Range[1] - selectedTicker.week52Range[0])) *
+                  100
+                )
+              )}
+            />
           </div>
           <div className="rounded-lg border bg-background/60 p-3">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">Volume</p>
