@@ -96,6 +96,7 @@ export const TickerDetailCard = ({ selectedTicker, selectedChange, chartGradient
               <span>{formatPrice(selectedTicker.dayRange[1])}</span>
             </div>
             <Progress
+              aria-label="Current price position within today's trading range"
               className="mt-2 h-1 bg-muted"
               value={Math.min(
                 100,
@@ -113,6 +114,7 @@ export const TickerDetailCard = ({ selectedTicker, selectedChange, chartGradient
               <span>{formatPrice(selectedTicker.week52Range[1])}</span>
             </div>
             <Progress
+              aria-label="Current price position within 52-week range"
               className="mt-2 h-1 bg-muted *:data-[slot=progress-indicator]:bg-primary/80"
               value={Math.min(
                 100,
