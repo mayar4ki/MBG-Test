@@ -12,10 +12,6 @@
         "dist/**"
       ]
     },
-    "build:contracts": {
-      "dependsOn": [],
-      "outputs": ["artifacts/**"]
-    },
     "lint": {
       "dependsOn": ["^lint"]
     },
